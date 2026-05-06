@@ -1,0 +1,27 @@
+# vicon2gt parameters
+
+# Rotation from world frame (G) to vicon frame (V)
+# Default: identity
+R_GtoV: [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+
+# Gravity magnitude
+gravity_magnitude: 9.81
+
+# Rotation from body frame (B) to IMU frame (I)
+# Default: identity
+R_BtoI: [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+
+# Position of body frame origin in IMU frame
+# Default: zero
+p_BinI: [0.0, 0.0, 0.0]
+
+# Initial time offset from vicon to IMU (seconds)
+toff_imu_to_vicon: 0.0
+
+# Estimation flags
+estimate_toff_vicon_to_imu: true
+estimate_ori_vicon_to_imu: true
+estimate_pos_vicon_to_imu: true
+
+# Number of relinearization loops
+num_loop_relin: 0

@@ -1,37 +1,35 @@
 <?xml version="1.0"?>
-<package>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
 
-    <!-- Package Information -->
-    <name>vicon2gt</name>
-    <version>1.0.0</version>
-    <description>
-        Transforms groundtruth Vicon poses along with IMU measurements into a groundtruth trajectory.
-        All spacial-temporal parameters are estimated between the Vicon and IMU sensor.
-    </description>
+  <name>vicon2gt</name>
+  <version>2.0.0</version>
+  <description>
+    Transforms groundtruth Vicon poses along with IMU measurements into a groundtruth trajectory.
+    All spatial-temporal parameters are estimated between the Vicon and IMU sensor.
+    ROS2 port of the original vicon2gt package.
+  </description>
 
-    <!-- Code Authors -->
-    <author email="pgeneva@udel.edu">Patrick Geneva</author>
-    <maintainer email="pgeneva@udel.edu">Patrick Geneva</maintainer>
+  <maintainer email="pgeneva@udel.edu">Patrick Geneva</maintainer>
+  <license>GPL-3.0</license>
 
-    <!-- Licensing -->
-    <license>GNU General Public License v3.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
-    <!-- Dependencies which this package needs to build itself. -->
-    <buildtool_depend>catkin</buildtool_depend>
+  <depend>rclcpp</depend>
+  <depend>rosbag2_cpp</depend>
+  <depend>rosbag2_storage</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>Boost</depend>
+  <depend>Eigen3</depend>
+  <depend>GTSAM</depend>
 
-    <!-- Dependencies needed to compile this package. -->
-    <build_depend>cmake_modules</build_depend>
-    <build_depend>roscpp</build_depend>
-    <build_depend>rosbag</build_depend>
-    <build_depend>geometry_msgs</build_depend>
-    <build_depend>sensor_msgs</build_depend>
-    <build_depend>nav_msgs</build_depend>
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
 
-    <!-- Dependencies needed after this package is compiled. -->
-    <run_depend>roscpp</run_depend>
-    <run_depend>rosbag</run_depend>
-    <run_depend>geometry_msgs</run_depend>
-    <run_depend>sensor_msgs</run_depend>
-    <run_depend>nav_msgs</run_depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
 
 </package>

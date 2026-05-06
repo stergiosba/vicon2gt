@@ -1,53 +1,58 @@
-# vicon2gt
+# vicon2gt (ROS2)
 
 This utility was created to generate groundtruth trajectories using a motion capture system (e.g. Vicon or OptiTrack) for use in evaluating visual-inertial estimation systems.
+
+**Note:** This is the ROS2 version. It uses rosbag2, YAML configuration files, and Python launch files.
+
 Specifically we want to calculate the inertial IMU state (full 15 dof) at camera frequency rate and generate a groundtruth trajectory similar to those provided by the EurocMav datasets.
 Please take a look at the **[REPORT](docs/tr_vicon2gt.pdf)** for specific details and a more formal description.
 
 You will need to have a bag dataset that has the IMU, camera, and motion capture measurements of either `geometry_msgs::TransformStamped`, `geometry_msgs::PoseStamped`, or `nav_msgs::Odometry`.
 If you are using the odometry topic it will use the provided covariance, otherwise it will use the one specified in the launch file.
 To run please take a look at the example launch files and try them out before testing on your own dataset.
-ros
 
 ## Example Outputs
 
 
 ![trajectory optimized](docs/traj.png)
 
+This is the output from running the `Euroc_V1_01_easy` dataset:
 ```
+======================================
 state_0: 
-m_time:[1413394882.43529]'
-q:[0.0251614, -0.79553, 0.0362641, 0.604304]'
-bg:[-0.00190837, 0.0243624, 0.0807357]'
-v:[-0.00342677, 0.00767059, 0.0012364]'
-ba:[-0.012316, 0.0955729, 0.0272365]'
-p:[-1.05904, 0.429683, 1.33247]'
+m_time:[1403715273.265178203582764]'
+q:[-0.824108561, -0.107921844, -0.551679051, 0.069628870]'
+bg:[-0.002290441, 0.021524870, 0.076934089]'
+v:[0.009051402, 0.012688560, -0.002111524]'
+ba:[-0.015325121, 0.056865077, 0.045283626]'
+p:[0.888218901, 2.176227461, 0.973724737]'
 
 state_N: 
-m_time:[1413394997.13767]'
-q:[-0.493136, -0.636743, -0.359694, 0.471165]'
-bg:[-0.00152427, 0.0255527, 0.0799344]'
-v:[-0.00181216, 0.00289851, -0.00109534]'
-ba:[-0.00140464, 0.0198116, 0.0590847]'
-p:[-3.02558, -0.526505, 0.958149]'
+m_time:[1403715417.485040664672852]'
+q:[0.794301430, -0.192060649, 0.557188750, 0.147440299]'
+bg:[-0.002371048, 0.020517845, 0.076801849]'
+v:[-0.009140881, 0.023099149, 0.004754173]'
+ba:[-0.014644270, 0.130022137, 0.056304112]'
+p:[0.521187187, 1.996189452, 0.997022567]'
 
 R_BtoI: 
- 0.301581  0.017225  0.953285
-0.0239218 -0.999659  0.010495
-  0.95314 0.0196392 -0.301891
+ 0.338149366  0.001584890  0.941091119
+ 0.029575777 -0.999522527 -0.008943765
+ 0.940627599  0.030857830 -0.338034784
 
 p_BinI: 
- 0.0789319
--0.0253601
- -0.118787
+ 0.043336195
+-0.024357743
+-0.127015944
 
 R_GtoV: 
-    0.999968            0   0.00803607
--7.00472e-05     0.999962   0.00871631
- -0.00803577  -0.00871659      0.99993
+ 0.999993299  0.000000046  0.003660767
+ 0.000000000  1.000000000 -0.000012472
+-0.003660767  0.000012472  0.999993299
 
 t_off_vicon_to_imu: 
-0.197127
+0.001939893
+
 ```
 
 
@@ -70,34 +75,75 @@ t_off_vicon_to_imu:
 
 
 
-## Building GTSAM and Dependencies
+## Building (ROS2)
 
-GTSAM is the only package you need to build the others (boost, eigen3) typically come on a linux-based OS.
-You can optionally install Intel TBB installed as this will allow for GTSAM multithreaded performance ([link](https://software.intel.com/en-us/articles/installing-intel-free-libs-and-python-apt-repo)).
-You don't need this, but this will allow for faster optimization.
-```cmd
-wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB
-sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB
-rm GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB
-sudo sh -c 'echo deb https://apt.repos.intel.com/tbb all main > /etc/apt/sources.list.d/intel-tbb.list'
-sudo apt-get update
-sudo apt-get install intel-tbb-2020.3-912
-```
+This package uses ROS2 with ament_cmake. Dependencies required:
+- ROS2 (humble or rolling recommended)
+- Boost
+- Eigen3
+- GTSAM 4.2a5
+- yaml-cpp
+- rosbag2
 
-Then we can [build](https://gtsam.org/get_started/) [GTSAM](https://gtsam.org/build/) as normal and install it globally on our system.
-Note that we use the system Eigen since we want to link with packages which also use that Eigen version.
+### Build GTSAM 4.2a5
+
 ```cmd
-sudo apt install libboost-all-dev libeigen3-dev libmetis-dev
+sudo apt install libboost-all-dev libeigen3-dev libmetis-dev libyaml-cpp-dev
 git clone https://github.com/borglab/gtsam
 cd gtsam
-git checkout 4.2a5 # supported by 4.2a5 version of GTSAM
-mkdir build/
-cd build/
+git checkout 4.2a5
+mkdir build/ && cd build/
 cmake -DCMAKE_BUILD_TYPE=Release -DGTSAM_USE_SYSTEM_EIGEN=ON ..
-make -j6
-sudo make -j6 install
-echo 'export LD_LIBRARY_PATH=/usr/local/lib/:$LD_LIBRARY_PATH' >> ~/.bashrc
+make -j$(nproc)
+sudo make install
 ```
+
+### Build vicon2gt
+
+```cmd
+cd ~/ros2_ws/src
+git clone https://github.com/your-repo/vicon2gt.git
+cd ~/ros2_ws
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --packages-select vicon2gt
+source install/setup.bash
+```
+
+### Running
+
+#### Using the launch file:
+
+```cmd
+ros2 launch vicon2gt exp_eth.launch.py
+```
+
+A more generic launch file will be added soon.
+
+### Configuration
+
+Edit `config/params.yaml` to set optimization parameters:
+
+```yaml
+R_GtoV: [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+gravity_magnitude: 9.81
+R_BtoI: [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+p_BinI: [0.0, 0.0, 0.0]
+toff_imu_to_vicon: 0.0
+estimate_toff_vicon_to_imu: true
+estimate_ori_vicon_to_imu: true
+estimate_pos_vicon_to_imu: true
+num_loop_relin: 0
+```
+
+#### Running Simulation Mode:
+
+This has not been ported yet.
+<!-- ```cmd
+ros2 run vicon2gt run_simulation \
+  --ros-args -p config_file:=/path/to/config/params.yaml \
+  -p path_states_gt:=/tmp/gt_states.csv \
+  -p path_info:=/tmp/info.txt
+``` -->
 
 
 ## Credit / Licensing

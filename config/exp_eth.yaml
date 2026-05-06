@@ -1,0 +1,44 @@
+# vicon2gt configuration - Euroc Eth dataset parameters
+
+# Use rosbag2 (directory) instead of CSV files
+path_bag: /home/horclab/Downloads/vicon_room1/V1_01_easy_ros2
+
+# Topic configuration
+topic_imu: /imu0
+topic_vicon: /vicon/firefly_sbx/firefly_sbx
+
+# Output paths (leave empty, will use dataset parameter from launch)
+stats_path_states: /tmp/eth_vicon2gt_states.csv
+stats_path_info: /tmp/eth_vicon2gt_info.txt
+
+# Bag parameters
+bag_start: 0
+bag_durr: -1
+
+# Output settings
+state_freq: 100
+save_to_file: true
+use_manual_sigmas: true
+freq_pub_raw_vicon: 1.0
+
+# Calibration parameters (from exp_eth.launch)
+R_BtoI: [0.337977, 0.000209931, 0.941155, 0.0261378, -0.999616, -0.00916333, 0.940792, 0.0276967, -0.337852]
+p_BinI: [0.0701351, -0.0162268, -0.528389]
+R_GtoV: [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+
+# World parameters
+gravity_magnitude: 9.81
+toff_imu_to_vicon: 0.0
+num_loop_relin: 0
+estimate_toff_vicon_to_imu: true
+estimate_ori_vicon_to_imu: true
+estimate_pos_vicon_to_imu: true
+
+# Vicon sigmas (rx, ry, rz, px, py, pz)
+vicon_sigmas: [1e-3, 1e-3, 1e-3, 1e-2, 1e-2, 1e-2]
+
+# IMU noise parameters (VI-Sensor / Euroc)
+gyroscope_noise_density: 1.6968e-04
+gyroscope_random_walk: 1.9393e-05
+accelerometer_noise_density: 2.0000e-3
+accelerometer_random_walk: 3.0000e-3
