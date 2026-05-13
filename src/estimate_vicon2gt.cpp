@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
   if (argc >= 3) {
     path_to_bag = argv[2];
   }
-
+  path_to_bag += ".mcap";
   // Only override from rclcpp params if they have non-empty values
   try {
     rclcpp::Parameter param;
